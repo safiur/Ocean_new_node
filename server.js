@@ -25,6 +25,14 @@ const corsOptions = {
   preflightContinue: false,
 };
 app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 app.use(bodyParser.json());
 
 // const db = require("./config/keys").mongoURI;
