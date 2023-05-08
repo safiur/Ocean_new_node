@@ -3,18 +3,28 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const users = require("./routes/api/users");
+const app = express();
+const cors = require("cors");
 require("dotenv").config();
 const BASE_URL = process.env.BASE_URL;
 
 console.log(BASE_URL);
+app.options("*", cors());
 
-const app = express();
 app.use(
   bodyParser.urlencoded({
     extended: false,
   })
 );
-
+const corsOptions = {
+  origin: process.env.BASE_URL,
+  credentials: true,
+  allowedHeaders: ["sessionId", "Content-Type"],
+  exposedHeaders: ["sessionId"],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+};
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // const db = require("./config/keys").mongoURI;
