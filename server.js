@@ -35,8 +35,8 @@ app.use((req, res, next) => {
 });
 app.use(bodyParser.json());
 
-// const db = require("./config/keys").mongoURI;
-const db = process.env.DATABASE;
+const db = require("./config/keys").mongoURI;
+// const db = process.env.DATABASE;
 
 app.get("/", (req, res) => {
   res.status(201).json("server star");
