@@ -3,12 +3,62 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
-
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
-
 const User = require("../../models/User");
+var mysql = require("mysql");
 
+router.post("/schema", function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  var connection = mysql.createConnection({
+    host: req.body.name,
+    port: req.body.port,
+    user: req.body.user,
+    password: req.body.password,
+    database: req.body.database,
+  });
+  connection.query(
+    "SELECT schema_name FROM information_schema.schemata",
+    function (err, rows) {
+      let result = Object.values(JSON.parse(JSON.stringify(rows)));
+      res.status(200).json(rows);
+    }
+  );
+});
+
+router.post("/database", function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  var connection = mysql.createConnection({
+    host: req.body.connectivity.name,
+    port: req.body.connectivity.port,
+    user: req.body.connectivity.user,
+    password: req.body.connectivity.password,
+    database: req.body.connectivity.database,
+  });
+  connection.query(
+    `SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema ='${req.body.databaseName}' ;`,
+    function (err, rows) {
+      res.status(200).json(rows);
+    }
+  );
+});
+
+router.post("/databaseTable", function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  var connection = mysql.createConnection({
+    host: req.body.connectivity.name,
+    port: req.body.connectivity.port,
+    user: req.body.connectivity.user,
+    password: req.body.connectivity.password,
+    database: req.body.connectivity.database,
+  });
+  connection.query(
+    `SELECT * FROM ${req.body.databaseName}.${req.body.databaseTableName}`,
+    function (err, rows) {
+      res.status(200).json(rows);
+    }
+  );
+});
 router.post("/register", (req, res) => {
   const { errors, isValid } = validateRegisterInput(req.body);
   if (!isValid) {
@@ -54,6 +104,7 @@ router.post("/login", (req, res) => {
           name: user.name,
           Role: user.Role,
         };
+
         jwt.sign(
           payload,
           keys.secretOrKey,
