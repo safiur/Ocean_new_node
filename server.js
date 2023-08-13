@@ -7,7 +7,6 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 var mysql = require("mysql");
-var connection = require("./sqlserver");
 var session = require("express-session");
 var flash = require("express-flash");
 var userRoute = require("./routes/api/users");
