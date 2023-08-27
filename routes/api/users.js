@@ -59,6 +59,21 @@ router.post("/databaseTable", function (req, res, next) {
     }
   );
 });
+router.post("/queryGeneration", function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  console.log(req.body);
+  var connection = mysql.createConnection({
+    host: req.body.connectivity.name,
+    port: req.body.connectivity.port,
+    user: req.body.connectivity.user,
+    password: req.body.connectivity.password,
+    database: req.body.connectivity.database,
+  });
+  connection.query(req.body.requestQuery, function (err, rows) {
+    console.log(rows);
+    res.status(200).json(rows);
+  });
+});
 router.post("/register", (req, res) => {
   const { errors, isValid } = validateRegisterInput(req.body);
   if (!isValid) {
